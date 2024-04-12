@@ -28,7 +28,8 @@ export default async function handleRequest(req: Request & { nextUrl?: URL }) {
 
   // 根据当前访问的域名的二级域名名称代理到不同的域名
   // 获取二级域名名称
-  const subdomain = hostname.split('.')[0];
+  const hostHeader = req.headers.get("host");
+  const subdomain = hostHeader.split('.')[0];
 
   let targetDomain;
 
