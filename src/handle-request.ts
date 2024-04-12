@@ -1,9 +1,3 @@
-const baseUrls = {
-  [`groq-proxy`]: "https://api.groq.com",
-  [`openai-proxy`]: "https://api.openai.com",
-  // Add more domains as needed
-};
-
 const pickHeaders = (headers: Headers, keys: (string | RegExp)[]): Headers => {
   const picked = new Headers();
   for (const key of headers.keys()) {
@@ -33,11 +27,25 @@ export default async function handleRequest(req: Request & { nextUrl?: URL }) {
   const { pathname, search } = req.nextUrl ? req.nextUrl : new URL(req.url);
 
   // 根据当前访问的域名的二级域名名称代理到不同的域名
-  const host = req.nextUrl ? req.nextUrl.host : req.headers.get("host") || "";
-  const secondLevelDomain = host.split(".")[0];
-  const baseUrl = baseUrls[`${secondLevelDomain}-proxy`] || "https://api.openai.com"; // Default to api.openai.com if no match
-  
-  const url = new URL(pathname + search, baseUrl).href;
+  // 获取二级域名名称
+  const subdomain = hostname.split('.')[0];
+
+  let targetDomain;
+
+  // 根据不同的二级域名设置目标域名
+  switch (subdomain) {
+      case "groq-proxy":
+          targetDomain = "https://api.groq.com";
+          break;
+      case "openai-proxy":
+          targetDomain = "https://api.openai.com";
+          break;
+      default:
+          targetDomain = "https://api.openai.com"; // 默认目标域名
+          break;
+  }
+
+  const url = new URL(pathname + search, targetDomain).href;
   const headers = pickHeaders(req.headers, ["content-type", "authorization"]);
 
   const res = await fetch(url, {
