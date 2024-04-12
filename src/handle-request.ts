@@ -41,6 +41,9 @@ export default async function handleRequest(req: Request & { nextUrl?: URL }) {
       case "openai-proxy":
           targetDomain = "https://api.openai.com";
           break;
+      case "one-api-proxy":
+          targetDomain = "https://one-api.1314918.xyz:18443";
+          break;
       default:
           targetDomain = "https://api.openai.com"; // 默认目标域名
           break;
