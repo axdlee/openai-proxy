@@ -25,6 +25,7 @@ export default async function handleRequest(req: Request & { nextUrl?: URL }) {
   }
 
   const { pathname, search } = req.nextUrl ? req.nextUrl : new URL(req.url);
+  
   const url = new URL(pathname + search, "https://api.groq.com").href;
   const headers = pickHeaders(req.headers, ["content-type", "authorization"]);
 
